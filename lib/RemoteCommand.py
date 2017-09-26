@@ -7,6 +7,8 @@ Created on Sep 26, 2017
 '''
 
 from subprocess import PIPE,Popen
+
+from lib.code_assistance import _log
 '''
     usage:
     rc = RemoteCommand(hostname = "10.0.0.11", username = "root", \
@@ -82,7 +84,7 @@ class RemoteCommand(object):
             _cmd += _hostname + " \"" + cmdline + "\""        
             
             _msg = "running os command: " + _cmd    
-            print _msg
+            _log("INFO",_msg)
             
             _proc_h = Popen(_cmd, shell=True, stdout=PIPE, stderr=PIPE)
         
