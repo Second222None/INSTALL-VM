@@ -3,7 +3,7 @@
 import logging
 
 def init_log():
-    logger = logging.getLogger()
+    logger = logging.getLogger("mylogger")
     loghdlr = logging.StreamHandler()
     fmt = logging.Formatter("[%(asctime)s] [%(levelname)s] %(module)s %(lineno)d %(message)s")
     loghdlr.setFormatter(fmt)
@@ -12,12 +12,14 @@ def init_log():
 
 def _log(*args):
     
+    
+    logger = logging.getLogger("mylogger")
     _log_severity={}
-    _log_severity["DEBUG"] = logging.debug
-    _log_severity["INFO"] = logging.info
-    _log_severity["WARN"] = logging.warning
-    _log_severity["ERROR"] = logging.error
-    _log_severity["CRITICAL"] = logging.critical
+    _log_severity["DEBUG"] = logger.debug
+    _log_severity["INFO"] = logger.info
+    _log_severity["WARN"] = logger.warning
+    _log_severity["ERROR"] = logger.error
+    _log_severity["CRITICAL"] = logger.critical
     
 #     print _log_severity
     

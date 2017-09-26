@@ -9,17 +9,22 @@ Created on Sep 26, 2017
 from subprocess import PIPE,Popen
 
 from lib.code_assistance import _log
+import logging
+
+
 '''
     usage:
     rc = RemoteCommand(hostname = "10.0.0.11", username = "root", \
                        priv_key = "~/key.pem")
 '''
+logger = logging.getLogger("mylogger")
+
 class RemoteCommand(object):
     '''
         Remote Command
     '''
-
-
+   
+    
     def __init__(self, hostname = "127.0.0.1", port = "22", username = None, \
                  priv_key = None,  \
                  connection_timeout = None, osci = None):
@@ -84,7 +89,8 @@ class RemoteCommand(object):
             _cmd += _hostname + " \"" + cmdline + "\""        
             
             _msg = "running os command: " + _cmd    
-            _log("INFO",_msg)
+#             _log(_msg)
+            logger.debug(_msg)
             
             _proc_h = Popen(_cmd, shell=True, stdout=PIPE, stderr=PIPE)
         
