@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 
+import os
+import sys
+import linecache
+
 import logging
+
+import signal
+import functools
 
 def init_log():
     logger = logging.getLogger("mylogger")
@@ -32,4 +39,93 @@ def _log(*args):
     
     _log_severity[_severity](_msg)
         
+
+'''
+    decorator @trace
+'''
+def trace(f):
+    def localtrace(frame, event, arg):
+        if 'line' == event:
+            filepath = frame.f_code.co_filename
+            lineno = frame.f_lineno
+#             print 'filepath =', frame.f_code
+            print '{filepath}({lineno}):{line}'.format(
+                filepath=filepath,
+                lineno=lineno,
+                line=linecache.getline(filepath, lineno).strip('\r\n'))
+            
+            return localtrace
+        
+    def globaltrace(frame, event, arg):
+        if 'call' == event:
+            print 'call'
+            return localtrace
+              
+#         return None
+
+    def _f(*arg, **kwards):
+        sys.settrace(globaltrace)
+        result = f(*arg, **kwards)
+        sys.settrace(None)
+        return result
+    
+    return _f
+
+
+
+class TimeoutError(Exception):
+    pass
+
+def timeout(seconds, error_message='Function call timed out'):
+    def decorated(func):
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        def wrapper(*args, **kwargs):
+            signal.signal(signal.SIGALRM, _handle_timeout)
+            signal.alarm(seconds)
+
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                signal.alarm(0)
+
+            return result
+        return functools.wraps(func)(wrapper)
+    return decorated
+
+
+@timeout(3)
+def slowfunc(sleep_time):
+    import time
+    time.sleep(sleep_time)
+
+@trace
+def xxx():
+    print 1
+
+    result = ''
+    for i in ['1', '2', '3']:
+        if i == '3':
+            result += i
+
+    print result
+
+if '__main__' == __name__:
+#     xxx()
+    slowfunc(1)
+    print 'ok'
+    
+    try:
+        slowfunc(5)
+    except TimeoutError:
+        print 'timeout'
+
+
+
+
+
+
+
+
     
