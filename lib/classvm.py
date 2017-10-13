@@ -419,12 +419,20 @@ class vm():
             if (self.vgname=="none" or self.vgname=="cp"):
                 
                 logger.debug('weisong')
-                
+                '''
                 tmp_xml2=" virt-install --name="+self.name+" --vcpus="+self.cpu+" --ram="+self.mem+" --disk path="+self.vda+\
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
                 " --disk path="+self.vdb+\
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
                 " --network bridge="+self.out_bridge+",model="+self.out_type+",mac="+self.out_mac+" --network bridge="+self.in_bridge+\
+                ",model="+self.in_type+",mac="+self.in_mac+" --vnc --vncport="+self.vnc_port+" --vnclisten=0.0.0.0"+" --import --hvm --virt-type kvm  "+\
+                " --print-xml>"+vmfile
+                '''
+                tmp_xml2=" virt-install --name="+self.name+" --vcpus="+self.cpu+" --ram="+self.mem+" --disk path="+self.vda+\
+                ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
+                " --disk path="+self.vdb+\
+                ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
+                " --network bridge="+self.out_bridge+",model="+self.out_type+",mac="+self.out_mac+" --network network="+self.in_bridge+\
                 ",model="+self.in_type+",mac="+self.in_mac+" --vnc --vncport="+self.vnc_port+" --vnclisten=0.0.0.0"+" --import --hvm --virt-type kvm  "+\
                 " --print-xml>"+vmfile
             else:

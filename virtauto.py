@@ -187,7 +187,7 @@ def vm_ct():
             vmtmp.vm_resize_disk2()
             vmtmp.vm_xmlfile_create2()
             
-            vmtmp.vm_nicinfo_create()
+#             vmtmp.vm_nicinfo_create()
             vmtmp.vm_nicinfo_copy_in()
             
             if vmtmp.vm_define() == '1':

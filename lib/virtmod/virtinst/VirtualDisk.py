@@ -30,13 +30,13 @@ import re
 import urlgrabber.progress as progress
 import libvirt
 
-import virtinst
+import lib.virtmod.virtinst
 from lib.virtmod.virtinst import uriutil
 
-from virtinst import util
-from virtinst import Storage
-from virtinst.VirtualDevice import VirtualDevice
-from virtinst.XMLBuilderDomain import _xml_property
+from lib.virtmod.virtinst import util
+from lib.virtmod.virtinst import Storage
+from lib.virtmod.virtinst.VirtualDevice import VirtualDevice
+from lib.virtmod.virtinst.XMLBuilderDomain import _xml_property
 
 
 def _vdisk_create(path, size, kind, sparse=True):
@@ -1506,7 +1506,7 @@ class VirtualDisk(VirtualDevice):
         cache = self.driver_cache
         iomode = self.driver_io
 
-        if virtinst.stable_defaults:
+        if lib.virtmod.virtinst.stable_defaults:
             # Enable cache=none for non-CDROM devs
             if (self.is_qemu() and
                 not cache and

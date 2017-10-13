@@ -4,7 +4,26 @@
 #set hostname and nic ip
 #get all if and mac and counter
 
+
 #function create network config file
+
+if_ws(){
+interface_name=$1
+nic1_ip=$2
+nic1_netmask=$3
+nic1_gateway=$4
+interface_file=$5
+#interface 1
+echo "# The primary network interface">>$interface_file
+echo "auto "$interface_name>>$interface_file
+echo "iface $interface_name inet static">>$interface_file
+echo "        address "$nic1_ip>>$interface_file
+echo "        netmask "$nic1_netmask>>$interface_file
+#echo "        gateway "$nic1_gateway>>$interface_file
+#echo "        dns-nameservers 8.8.8.8">>$interface_file
+}
+
+
 if_one(){
 interface_name=$1
 nic1_ip=$2
@@ -82,6 +101,9 @@ echo "# This file describes the network interfaces available on your system
 # The loopback network interface">>$nic_name_file
 echo "auto lo">>$nic_name_file
 echo "iface lo inet loopback">>$nic_name_file
+echo "# The primary network interface">>$nic_name_file
+echo "auto eth0" >> $nic_name_file
+echo "iface eth0 inet dhcp" >> $nic_name_file
 
 
 ##############set hostname#####################
@@ -107,10 +129,13 @@ echo This VM have $ifcounter interfaces
 #push if and mac to array
 if [ $ifcounter == 1 ];then
 	echo "This VM have one network"
-	if_one ${ifname[0]} $get_nic1_ip $get_nic1_netmask $get_gateway $nic_name_file
+	#if_one ${ifname[0]} $get_nic1_ip $get_nic1_netmask $get_gateway $nic_name_file
 elif [ $ifcounter == 2 ];then
 	echo "This VM have two network"
-	if_two ${ifname[0]} $get_nic1_ip $get_nic1_netmask $get_gateway $nic_name_file ${ifname[1]} $get_nic2_ip $get_nic2_netmask
+	#if_two ${ifname[0]} $get_nic1_ip $get_nic1_netmask $get_gateway $nic_name_file ${ifname[1]} $get_nic2_ip $get_nic2_netmask
+    if_ws ${ifname[1]} $get_nic2_ip $get_nic2_netmask $get_gateway $nic_name_file
+    route del default
+    route add default gw $get_gateway eth0
 else
 	echo "this VM don't have network interface"
 	exit 0
