@@ -1,4 +1,4 @@
-# toolkit
+# TOOLKIT
 # 
 Function: Create VM automately by virt-install cmd. The network and 
 hostname will be set.
