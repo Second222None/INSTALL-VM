@@ -5,11 +5,17 @@
 '''
 
 import os
-# import sys
+
+import pwd 
+import crypt #@UnresolvedImport
+import random
+
+import hashlib
 import string
 import logging
 
 from lib.virtmod import colpt
+#from prompt_toolkit.key_binding.bindings.named_commands import self_insert
 # from lib.virtmod import syncTemp
 # from lib.virtmod import osprobe
 
@@ -22,6 +28,7 @@ class vm():
         MAC1=virtmod.virtinst.util.randomMAC("qemu")
         MAC2=virtmod.virtinst.util.randomMAC("qemu")
         self.name=""
+        self.pwd=""
         self.temp=""
         self.cpu="2"
         self.mem="2097152"
@@ -179,7 +186,7 @@ class vm():
         elif (checkos=="ubuntu"):
             colpt.ptred("Linux disk expand only test image by ubuntu ")
             #virt-resize --lvexpand /dev/vmvg/root centos56x64_10G_vda.qcow2 centostest.vda
-            vm_disk1_resize="virt-resize --expand /dev/sda2 --lv-expand /dev/sda1 /datapool/"+self.temp+" "+self.vda        
+            vm_disk1_resize="virt-resize --expand /dev/sda1 /datapool/"+self.temp+" "+self.vda        
         else:
             vmiprun="ls /datapool"
             print "RRRR"
@@ -253,6 +260,53 @@ class vm():
         f.close()
         nic_file2dos="unix2dos "+nic_file
         os.system(nic_file2dos)
+    
+    def _generate_salt(self):
+        salt_set = ('abcdefghijklmnopqrstuvwxyz'
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                '0123456789./')
+        salt = 16 * ' '
+        return ''.join([random.choice(salt_set) for c in salt])
+    
+    def encrypted_passwd(self, admin_passwd):
+        algos = {'SHA-512': '$6$', 'SHA-256': '$5$', 'MD5': '$1$', 'DES': ''}
+
+        salt = self._generate_salt()
+
+        # crypt() depends on the underlying libc, and may not support all
+        # forms of hash. We try md5 first. If we get only 13 characters back,
+        # then the underlying crypt() didn't understand the '$n$salt' magic,
+        # so we fall back to DES.
+        # md5 is the default because it's widely supported. Although the
+        # local crypt() might support stronger SHA, the target instance
+        # might not.
+        encrypted_passwd = crypt.crypt(admin_passwd, algos['MD5'] + salt)
+        if len(encrypted_passwd) == 13:
+            encrypted_passwd = crypt.crypt(admin_passwd, algos['DES'] + salt)
+
+        return encrypted_passwd
+        
+    def vm_set_passwd(self):
+        checkos = self.os
+        if (checkos == "ubuntu"):
+#             shadow_out = "virt-copy-out -a" + self.vda + "/etc/shadow" +\
+#             mycwd + "virttmp/"
+            ciphertext = self.encrypted_passwd(self.pwd)
+            
+            shadow_out = "virt-copy-out -a " + self.vda + " /etc/shadow " +\
+                mycwd + "/virttmp/"
+            change_pwd = r"sed -i -r '/^ubuntu/s#ubuntu:([^:]*):(.*)#ubuntu:"+ \
+                ciphertext + r":\2#' " + mycwd +"/virttmp/shadow"
+            shadow_in="virt-copy-in -a " + self.vda + " " + mycwd+"/virttmp/shadow /etc/"
+            
+            logger.info(shadow_out) 
+            logger.info(change_pwd)
+            logger.info(shadow_in)
+            
+            os.system(shadow_out)   
+            os.system(change_pwd) 
+            os.system(shadow_in)  
+    
     def vm_nicinfo_copy_in(self):
         checkos=self.os
         if (checkos=="2003"):
@@ -421,14 +475,15 @@ class vm():
                 logger.debug('weisong')
                 '''
                 tmp_xml2=" virt-install --name="+self.name+" --vcpus="+self.cpu+" --ram="+self.mem+" --disk path="+self.vda+\
-                ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
+                ",bus=virtio,cache=none,format=qcow2,io=native"+\
                 " --disk path="+self.vdb+\
-                ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
+                ",bus=virtio,cache=none,format=qcow2,io=native"+\
                 " --network bridge="+self.out_bridge+",model="+self.out_type+",mac="+self.out_mac+" --network bridge="+self.in_bridge+\
                 ",model="+self.in_type+",mac="+self.in_mac+" --vnc --vncport="+self.vnc_port+" --vnclisten=0.0.0.0"+" --import --hvm --virt-type kvm  "+\
                 " --print-xml>"+vmfile
                 '''
-                tmp_xml2=" virt-install --name="+self.name+" --vcpus="+self.cpu+" --ram="+self.mem+" --disk path="+self.vda+\
+                tmp_xml2=" virt-install --name="+self.name+" --vcpus="+self.cpu+" --ram="+self.mem+\
+                " --disk path="+self.vda+\
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
                 " --disk path="+self.vdb+\
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\

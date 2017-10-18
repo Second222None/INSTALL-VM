@@ -149,21 +149,22 @@ def vm_ct():
         
         vmtmp.name = vminfo[2]
         vmtmp.define_vda_vdb()
-        vmtmp.disk1_size = vminfo[3]
-        vmtmp.disk2_size = vminfo[4]
-        vmtmp.mem = vminfo[5]
-        vmtmp.cpu = vminfo[6]
-        vmtmp.out_type = vminfo[7]
-        vmtmp.out_bridge = vminfo[8]
-        vmtmp.in_bridge = vminfo[9]
-        vmtmp.vnc_port = vminfo[10]
-        vmtmp.outip = vminfo[11]
-        vmtmp.outmask = vminfo[12]
-        vmtmp.outgw = vminfo[13]
-        vmtmp.in_type = vminfo[7]
-        vmtmp.inip = vminfo[14]
-        vmtmp.inmask = vminfo[15]
-        vmtmp.ingw = vminfo[16]
+        vmtmp.pwd = vminfo[3]
+        vmtmp.disk1_size = vminfo[4]
+        vmtmp.disk2_size = vminfo[5]
+        vmtmp.mem = vminfo[6]
+        vmtmp.cpu = vminfo[7]
+        vmtmp.out_type = vminfo[8]
+        vmtmp.out_bridge = vminfo[9]
+        vmtmp.in_bridge = vminfo[10]
+        vmtmp.vnc_port = vminfo[11]
+        vmtmp.outip = vminfo[12]
+        vmtmp.outmask = vminfo[13]
+        vmtmp.outgw = vminfo[14]
+        vmtmp.in_type = vminfo[8]
+        vmtmp.inip = vminfo[15]
+        vmtmp.inmask = vminfo[16]
+        vmtmp.ingw = vminfo[17]
         
         if vmtmp.vm_xmlfile_exist() == '1':
             colpt.ptred('xml or vda vdb file exist skip vm create!')
@@ -183,12 +184,17 @@ def vm_ct():
                 vmtmp.vm_lvm_disk1()
                 vmtmp.vm_lvm_disk2()
             '''
-            vmtmp.vm_cp_disk1()
+#             vmtmp.vm_cp_disk1()
+            vmtmp.vm_resize_disk1()
             vmtmp.vm_resize_disk2()
             vmtmp.vm_xmlfile_create2()
             
-#             vmtmp.vm_nicinfo_create()
             vmtmp.vm_nicinfo_copy_in()
+            
+            if vmtmp.pwd == 'none':
+                pass
+            else:
+                vmtmp.vm_set_passwd()
             
             if vmtmp.vm_define() == '1':
                 colpt.ptred('define failed skip vm create!')
