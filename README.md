@@ -41,24 +41,24 @@ All these functions run in an automatic way and controlled by /config/vm.csv.
 
 - Edit the /toolkit/config/vm.csv to customize your configuration.
 
-1. vm - qcow2, vmLvm - lvm, vmCpOnly - copy the image directly
-2. The name of the image in the /datapool/.
-3. The name of the VM.
-4. The password of the VM.
-5. The size of the first disk.
-6. The size of the second disk.
-7. The size of Memory.
-8. The number of vcpu.
-9. The virtualization of the first nic.(e1000,virtio)
-10. The birdge the first nic connected to.
-11. The birdge the second nic connected to.
-12. The VNC port.
-13. First IP.
-14. First netmask.
-15. First gateway.
-16. Second IP.
-17. Second netmask.
-18. Second gateway.
+	1. vm - qcow2, vmLvm - lvm, vmCpOnly - copy the image directly
+	2. The name of the image in the /datapool/.
+	3. The name of the VM.
+	4. The password of the VM.	
+	5. The size of the first disk.
+	6. The size of the second disk.
+	7. The size of Memory.
+	8. The number of vcpu.
+	9. The virtualization of the first nic.(e1000,virtio)
+	10. The birdge the first nic connected to.
+	11. The birdge the second nic connected to.
+	12. The VNC port.
+	13. First IP.
+	14. First netmask.
+	15. First gateway.
+	16. Second IP.
+	17. Second netmask.
+	18. Second gateway.
 
 - Run the script:
 
