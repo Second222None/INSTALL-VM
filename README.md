@@ -41,7 +41,7 @@ All these functions run in an automatic way and controlled by /config/vm.csv.
 
 - Edit the /toolkit/config/vm.csv to customize your configuration.
 
-	1. vm - qcow2, vmLvm - lvm, vmCpOnly - copy the image directly
+    1. vm - qcow2, vmLvm - lvm, vmCpOnly - copy the image directly
 	2. The name of the image in the /datapool/.
 	3. The name of the VM.
 	4. The password of the VM.	
