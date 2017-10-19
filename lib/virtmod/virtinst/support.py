@@ -20,8 +20,8 @@
 # MA 02110-1301 USA.
 
 import libvirt
-from lib.virtmod.virtinst import uriutil
-
+# from lib.virtmod.virtinst import uriutil
+import uriutil
 
 # Flags for check_conn_support
 SUPPORT_CONN_STORAGE = 0

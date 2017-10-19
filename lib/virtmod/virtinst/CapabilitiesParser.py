@@ -21,8 +21,8 @@
 
 import re
 
-from virtinst import util
-
+# from lib.virtmod.virtinst import util
+import util
 
 class CapabilitiesParserException(Exception):
     def __init__(self, msg):

@@ -10,4 +10,4 @@
 #
 # By default this script does nothing.
 
-/bin/bash /bin/setipbymac-ubuntu.sh ubuntu14.04-resize 192.168.122.1 0.0.0.0 0.0.0.0 52:54:00:92:CC:BE 10.0.20.30 255.255.255.0 52:54:00:94:89:A7
+/bin/bash /bin/setipbymac-ubuntu.sh ubuntu14.04 192.168.122.1 0.0.0.0 0.0.0.0 52:54:00:E2:CB:78 10.0.20.30 255.255.255.0 52:54:00:A1:47:AA

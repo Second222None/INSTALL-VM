@@ -28,12 +28,17 @@ import urlgrabber.progress as progress
 import libvirt
 import libxml2
 
-from lib.virtmod.virtinst import util
-from lib.virtmod.virtinst import CapabilitiesParser
-from lib.virtmod.virtinst import support
-from lib.virtmod.virtinst import XMLBuilderDomain
+# from lib.virtmod.virtinst import util
+import util
+# from lib.virtmod.virtinst import CapabilitiesParser
+import CapabilitiesParser
+# from lib.virtmod.virtinst import support
+import support
+# from lib.virtmod.virtinst import XMLBuilderDomain
+import XMLBuilderDomain
+
 # import virtinst
-import virtinst
+
 from lib.virtmod.virtinst.XMLBuilderDomain import _xml_property
 from lib.virtmod.virtinst.VirtualDevice import VirtualDevice
 from lib.virtmod.virtinst.VirtualDisk import VirtualDisk

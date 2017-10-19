@@ -98,12 +98,7 @@ touch $nic_name_file
 echo "# This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
 
-# The loopback network interface">>$nic_name_file
-echo "auto lo">>$nic_name_file
-echo "iface lo inet loopback">>$nic_name_file
-echo "# The primary network interface">>$nic_name_file
-echo "auto eth0" >> $nic_name_file
-echo "iface eth0 inet dhcp" >> $nic_name_file
+#The loopback network interface">>$nic_name_file
 
 
 ##############set hostname#####################
@@ -121,9 +116,15 @@ fi
 #######################get interface name###################
 ifname=(`/sbin/ifconfig -a |grep Link |awk '{print $1}'|grep -vE "lo|inet6|sit0"`)
 ifcounter=`/sbin/ifconfig -a |grep Link|grep -vE "lo|inet6|sit0" |wc -l`
-echo This VM have $ifcounter interfaces
+echo "This VM have "$ifcounter"interfaces"
 ###########################################################
 
+# The loopback network interface">>$nic_name_file
+echo "auto lo">>$nic_name_file
+echo "iface lo inet loopback">>$nic_name_file
+echo "# The primary network interface">>$nic_name_file
+echo "auto "${ifname[0]} >> $nic_name_file
+echo "iface "${ifname[0]}" inet dhcp" >> $nic_name_file
 
 ######################set network config file #######
 #push if and mac to array
@@ -135,7 +136,7 @@ elif [ $ifcounter == 2 ];then
 	#if_two ${ifname[0]} $get_nic1_ip $get_nic1_netmask $get_gateway $nic_name_file ${ifname[1]} $get_nic2_ip $get_nic2_netmask
     if_ws ${ifname[1]} $get_nic2_ip $get_nic2_netmask $get_gateway $nic_name_file
     route del default
-    route add default gw $get_gateway eth0
+    route add default gw $get_gateway ${ifname[0]}
 else
 	echo "this VM don't have network interface"
 	exit 0

@@ -23,7 +23,7 @@ All these functions run in an automatic way and controlled by /config/vm.csv.
 
 - The directory of image is /datapool/ on host.
 - The name of lvm must be 'vmvg'.(If used)
-- Libvirt, guestfish
+- Libvirt, guestfish.
 
 ## Run the script
 

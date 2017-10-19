@@ -18,9 +18,8 @@ from lib.virtmod.virtcli import cliconfig, cliutils
 stable_defaults = cliconfig.stable_defaults
 cliutils.setup_i18n()
 
-
 # Public imports
-
+'''
 from lib.virtmod.virtinst.Guest import Guest
 from lib.virtmod.virtinst.VirtualNetworkInterface import VirtualNetworkInterface
 from lib.virtmod.virtinst.VirtualGraphics import VirtualGraphics
@@ -50,3 +49,4 @@ from lib.virtmod.virtinst.Clock import Clock
 from lib.virtmod.virtinst.CPU import CPU, CPUFeature
 from lib.virtmod.virtinst.Seclabel import Seclabel
 from lib.virtmod.virtinst.VirtualRNGDevice import VirtualRNGDevice
+'''

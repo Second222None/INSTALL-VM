@@ -11,6 +11,10 @@ import sys
 import string
 import getopt
 
+# mycwd=os.getcwd()
+# modcwd=mycwd+'/virtmod'
+# sys.path.append(modcwd)
+
 from lib.virtmod import colpt
 from lib import classvm
 from lib.virtmod import syncTemp

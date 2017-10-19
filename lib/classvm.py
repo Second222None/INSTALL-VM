@@ -100,6 +100,8 @@ class vm():
             print r[0:100]
             if (string.find(r,"ubuntu")>0):
                 self.os="ubuntu"
+#                 if (string.find(self.temp,"cloud")>0):
+#                     self.os = "ubuntu-cloud"
             else:
                 print "os is unknow"
         print "os is "+self.os
@@ -175,6 +177,8 @@ class vm():
     def vm_resize_disk1(self):
         checkos=self.os
         vmdisk1="qemu-img create  -f qcow2 "+self.vda+" "+self.disk1_size
+        logger.debug(vmdisk1)
+#         print vmdisk1
         if (checkos=="2003"):
             vm_disk1_resize="virt-resize --expand /dev/vda1 /datapool/"+self.temp+" "+self.vda
         elif (checkos=="2008"):
@@ -183,18 +187,19 @@ class vm():
             colpt.ptred("Linux disk expand only test image by centos5.6 ")
             #virt-resize --lvexpand /dev/vmvg/root centos56x64_10G_vda.qcow2 centostest.vda
             vm_disk1_resize="virt-resize --expand /dev/vda2 --lv-expand /dev/vmvg/root /datapool/"+self.temp+" "+self.vda
-        elif (checkos=="ubuntu"):
+        elif (checkos=="ubuntu" or "ubuntu-cloud"):
             colpt.ptred("Linux disk expand only test image by ubuntu ")
             #virt-resize --lvexpand /dev/vmvg/root centos56x64_10G_vda.qcow2 centostest.vda
             vm_disk1_resize="virt-resize --expand /dev/sda1 /datapool/"+self.temp+" "+self.vda        
+            logger.debug(vm_disk1_resize)
+#             print vm_disk1_resize
         else:
             vmiprun="ls /datapool"
             print "RRRR"
-        print vmdisk1
-        #vm_disk1_resize="virt-resize --lveexpand /dev/vda1 /datapool/"+self.temp+" /datapool/"+self.vda
-        print vm_disk1_resize
+        
         os.popen(vmdisk1)
         os.system(vm_disk1_resize)
+        
     def vm_resize_disk2(self):
         mycwd=os.getcwd()
         w2k3vdbvirtpath=mycwd+"/virtvdb/win2k3.vdb"
@@ -224,7 +229,7 @@ class vm():
             #virt-resize --lvexpand /dev/vmvg/root centos56x64_10G_vda.qcow2 centostest.vda
             #vm_disk2_resize="virt-resize --expand /dev/vda2 --lvexpand /dev/vmvg/root /datapool/"+self.temp+" /datapool/"+self.vda
             vm_disk2_resize=""" echo "linux not expand disk2" """
-        elif (checkos=="ubuntu"):
+        elif (checkos=="ubuntu" or "ubuntu-cloud"):
             colpt.ptred("Linux disk expand only test image by ubuntu ")
             #virt-resize --lvexpand /dev/vmvg/root centos56x64_10G_vda.qcow2 centostest.vda
             #vm_disk2_resize="virt-resize --expand /dev/vda2 --lvexpand /dev/vmvg/root /datapool/"+self.temp+" /datapool/"+self.vda
@@ -288,11 +293,8 @@ class vm():
         
     def vm_set_passwd(self):
         checkos = self.os
-        if (checkos == "ubuntu"):
-#             shadow_out = "virt-copy-out -a" + self.vda + "/etc/shadow" +\
-#             mycwd + "virttmp/"
-            ciphertext = self.encrypted_passwd(self.pwd)
-            
+        ciphertext = self.encrypted_passwd(self.pwd)
+        if (checkos == "ubuntu"):      
             shadow_out = "virt-copy-out -a " + self.vda + " /etc/shadow " +\
                 mycwd + "/virttmp/"
             change_pwd = r"sed -i -r '/^ubuntu/s#ubuntu:([^:]*):(.*)#ubuntu:"+ \
@@ -305,8 +307,28 @@ class vm():
             
             os.system(shadow_out)   
             os.system(change_pwd) 
-            os.system(shadow_in)  
-    
+            os.system(shadow_in)
+        '''  
+        elif(checkos == "ubuntu-cloud"):
+            shadow_out = "virt-copy-out -a " + self.vda + " /etc/cloud/cloud.cfg " +\
+                mycwd + "/virttmp/"
+            change_pwd = r"sed -i -r '/(.*)lock_passwd/s#ubuntu:([^:]*)#lock_passwd:false#' " +\
+                mycwd + "/virttmp/cloud.cfg"
+            change_pwd2 = r"sed -i -r '/(.*)lock_passwd/a\plain_text_passwd:" + self.pwd +\
+                "' " + mycwd + "/virttmp/cloud.cfg"
+            shadow_in="virt-copy-in -a " + self.vda + " " + mycwd+"/virttmp/cloud.cfg /etc/cloud/"
+            
+            logger.info(shadow_out) 
+            logger.info(change_pwd)
+            logger.info(change_pwd2)
+            logger.info(shadow_in)
+            
+            os.system(shadow_out)   
+            os.system(change_pwd) 
+            os.system(change_pwd2)
+            os.system(shadow_in)
+        '''
+            
     def vm_nicinfo_copy_in(self):
         checkos=self.os
         if (checkos=="2003"):
