@@ -29,15 +29,15 @@ All these functions run in an automatic way and controlled by /config/vm.csv.
 
 - Download the script:
 
-'''
+```
 	git clone https://github.com/Second222None/toolkit
-'''
+```
 
 - Prepare the environment:
 
-'''
+```
 	# bash /toolkit/scripts/first.sh
-'''
+```
 
 - Edit the /toolkit/config/vm.csv to customize your configuration.
 
