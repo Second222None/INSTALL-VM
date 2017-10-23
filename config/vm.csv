@@ -3,10 +3,30 @@
 #keyword vmLvm means create lvm for vm,default vg is datavg
 #keyword vmCpOnly means not resize images , just cp imaiges,default vg is datavg
 #kerword url: means download vm images path,like 
-url:http://10.10.26.90/
-vm,ubuntu14-04.qcow2,ubuntu14.04,111111,20G,20G,2048,2,e1000,virbr0,ovs_br,5923,0.0.0.0,0.0.0.0,192.168.122.1,10.0.20.30,255.255.255.0,none
-#vm,trusty-server-cloudimg-amd64-disk1.img,ubuntu14.04-cloud,111111,20G,20G,2048,2,e1000,virbr0,ovs_br,5921,0.0.0.0,0.0.0.0,192.168.122.1,10.0.20.10,255.255.255.0,none
+#url:http://10.10.26.90/
+#vm,ubuntu14.04.qcow2,H1_ubuntu14.04,111111,20G,20G,2048,2,e1000,virbr0,ovs_br,5923,0.0.0.0,0.0.0.0,192.168.122.1,10.0.20.30,255.255.255.0,none
 #vm,ubuntu14.04.qcow2,ubuntu14.04-test2,20G,20G,2048,2,e1000,virbr0,ovs_br,5922,0.0.0.0,0.0.0.0,192.168.122.1,10.0.20.20,255.255.255.0,none
 #vm,win2003ent32chs,win2003-138,20G,20G,2048,2,e1000,br1,br1,5921,10.10.10.21,255.255.255.0,10.10.10.1,192.168.122.138,255.255.255.0,none
 #vmLvm,win2003ent32chs,virt1-lab-222,10G,10G,2048,2,e1000,br2,br2,59222,10.0.0.222,255.0.0.0,10.0.0.1,172.16.2.222,255.255.255.0,none
 #vmCpOnly,centos6564.qcow2,centos65-8,30G,20G,2048,2,virtio,br1,br1,59008,10.10.10.8,255.255.255.0,10.10.10.1,172.16.2.8,255.255.255.0,none
+
+[VM1]
+VM_NAME = H1-ubuntu14.04
+IMAGE_NAME = ubuntu14.04.qcow2
+IMAGE_FORMAT = vm
+PASSWORD = 111111
+DISK1 = 20G
+DISK2 = 20G
+MEMORY = 2048
+VCPU_NUM = 2
+NIC_VIRT = e1000
+NIC1_BRIDGE = virbr0
+NIC2_BRIDGE = ovs_br
+VNC_PORT = 5923
+NIC1_IP = 0.0.0.0
+NIC1_NETMASK = 0.0.0.0
+NIC1_GATEWAY = 192.168.122.1
+NIC2_IP = 10.0.20.30
+NIC2_NETMASK = 255.255.255.0
+NIC2_GATEWAY = none
+

@@ -10,6 +10,7 @@ import os
 import sys
 import string
 import getopt
+from lib.config import parse_config
 
 # mycwd=os.getcwd()
 # modcwd=mycwd+'/virtmod'
@@ -21,6 +22,8 @@ from lib.virtmod import syncTemp
 
 import logging
 from lib.code_assistance import init_log
+# from turtle import config_dict
+# from collections import Counter
 
 
 global vmarray, vminfo
@@ -74,43 +77,43 @@ def getopts():
             sys.exit(11)
             assert False,"unhand option"
  
-def checkinifile():
-    """check config file exist!"""
-#     global vmarray, vminfo
-#     global vminicouter
-    colpt.ptgreen_no_enter("check config file")
-    if os.path.isfile("config/vm.csv"):
-        colpt.ptgreen("..................config file exists ok!")
-    else:
-        colpt.ptred("config file not exists,please check!!!")
-        sys.exit(1) 
+# def checkinifile():
+#     """check config file exist!"""
+# #     global vmarray, vminfo
+# #     global vminicouter
+#     colpt.ptgreen_no_enter("check config file")
+#     if os.path.isfile("config/vm.csv"):
+#         colpt.ptgreen("..................config file exists ok!")
+#     else:
+#         colpt.ptred("config file not exists,please check!!!")
+#         sys.exit(1) 
 
-def readinifile():
-    """read config file and find valid value,assign value to vm array"""
-    global vmarray, vminfo
-    global vminicouter,vmurl1,vmurl2,urlcount
-    f=open("config/vm.csv","r")
-    i=0
-    for line in f:
-        logger.debug(str(line.strip()))
-        line=line.strip()
-        if (line.find("vm")==0):
-            vmarray[i]=line
-            i=i+1
-            vminicouter=i
-        
-        if (line.find("url:")==0):
-            temurl=line.split(":",1)
-            if (urlcount==0):
-                vmurl1=temurl[1]
-                urlcount=1
-            elif (urlcount==1):
-                vmurl2=temurl[1]
-                urlcount=2
-            else:
-                print "url more count error!"
-        
-    f.close()
+# def readinifile():
+#     """read config file and find valid value,assign value to vm array"""
+#     global vmarray, vminfo
+#     global vminicouter,vmurl1,vmurl2,urlcount
+#     f=open("config/vm.csv","r")
+#     i=0
+#     for line in f:
+#         logger.debug(str(line.strip()))
+#         line=line.strip()
+#         if (line.find("vm")==0):
+#             vmarray[i]=line
+#             i=i+1
+#             vminicouter=i
+#         
+#         if (line.find("url:")==0):
+#             temurl=line.split(":",1)
+#             if (urlcount==0):
+#                 vmurl1=temurl[1]
+#                 urlcount=1
+#             elif (urlcount==1):
+#                 vmurl2=temurl[1]
+#                 urlcount=2
+#             else:
+#                 print "url more count error!"
+#         
+#     f.close()
 
 def vm_ct():
     ''' 
@@ -122,25 +125,31 @@ def vm_ct():
     global vminicouter
     global vg
     j = 0
-     
+    
+    config_dict = parse_config("vm.csv")
+    logger.debug(config_dict)
+    vminicouter =  len(config_dict)
+    logger.debug('The number of vm is ' + str(vminicouter))
     vminfo = range(vminicouter)
     
     print "vm config info is:"
     while j < vminicouter:
         a = vmarray[j]
-        vminfo = string.split(a,",")
+        
         colpt.ptred("vm " + str(j) + " info")
-        colpt.ptyellow(str(vminfo))
+        colpt.ptyellow(str(config_dict['VM'+str(j+1)]))
         
         vmtmp=classvm.vm()
-        ifvg = vminfo[0] 
+#         ifvg = vminfo[0] 
+        ifvg = config_dict['VM'+str(j+1)]['IMAGE_FORMAT']
         logger.debug(ifvg)
         if(ifvg.find('Lvm')>0):
             vmtmp.vgname = 'vg'
         elif(ifvg.find('CpOnly')>0):
             vmtmp.vgname='none'
             
-        vmtmp.temp = vminfo[1]
+#         vmtmp.temp = vminfo[1]
+        vmtmp.temp = config_dict['VM'+str(j+1)]['IMAGE_NAME']
         logger.debug(vmtmp.temp)
         
         c=syncTemp.checkTempFile(vmtmp.temp,vmurl1,vmurl1)
@@ -151,24 +160,24 @@ def vm_ct():
             sys.exit(5)
         colpt.ptgreen('vm images check is ok!')
         
-        vmtmp.name = vminfo[2]
+        vmtmp.name = config_dict['VM'+str(j+1)]['VM_NAME']
         vmtmp.define_vda_vdb()
-        vmtmp.pwd = vminfo[3]
-        vmtmp.disk1_size = vminfo[4]
-        vmtmp.disk2_size = vminfo[5]
-        vmtmp.mem = vminfo[6]
-        vmtmp.cpu = vminfo[7]
-        vmtmp.out_type = vminfo[8]
-        vmtmp.out_bridge = vminfo[9]
-        vmtmp.in_bridge = vminfo[10]
-        vmtmp.vnc_port = vminfo[11]
-        vmtmp.outip = vminfo[12]
-        vmtmp.outmask = vminfo[13]
-        vmtmp.outgw = vminfo[14]
-        vmtmp.in_type = vminfo[8]
-        vmtmp.inip = vminfo[15]
-        vmtmp.inmask = vminfo[16]
-        vmtmp.ingw = vminfo[17]
+        vmtmp.pwd = config_dict['VM'+str(j+1)]['PASSWORD']
+        vmtmp.disk1_size = config_dict['VM'+str(j+1)]['DISK1']
+        vmtmp.disk2_size = config_dict['VM'+str(j+1)]['DISK2']
+        vmtmp.mem = config_dict['VM'+str(j+1)]['MEMORY']
+        vmtmp.cpu = config_dict['VM'+str(j+1)]['VCPU_NUM']
+        vmtmp.out_type = config_dict['VM'+str(j+1)]['NIC_VIRT']
+        vmtmp.out_bridge = config_dict['VM'+str(j+1)]['NIC1_BRIDGE']
+        vmtmp.in_bridge = config_dict['VM'+str(j+1)]['NIC2_BRIDGE']
+        vmtmp.vnc_port = config_dict['VM'+str(j+1)]['VNC_PORT']
+        vmtmp.outip = config_dict['VM'+str(j+1)]['NIC1_IP']
+        vmtmp.outmask = config_dict['VM'+str(j+1)]['NIC1_NETMASK']
+        vmtmp.outgw = config_dict['VM'+str(j+1)]['NIC1_GATEWAY']
+        vmtmp.in_type = config_dict['VM'+str(j+1)]['NIC_VIRT']
+        vmtmp.inip = config_dict['VM'+str(j+1)]['NIC2_IP']
+        vmtmp.inmask = config_dict['VM'+str(j+1)]['NIC2_NETMASK']
+        vmtmp.ingw = config_dict['VM'+str(j+1)]['NIC2_GATEWAY']
         
         if vmtmp.vm_xmlfile_exist() == '1':
             colpt.ptred('xml or vda vdb file exist skip vm create!')
@@ -176,19 +185,8 @@ def vm_ct():
             colpt.ptred('vm already exist skip vm create!')
         else:
             vmtmp.vm_os_check()
-        
-            '''
-            if vmtmp.vgname == 'none':
-                vmtmp.vm_resize_disk1()
-                vmtmp.vm_resize_disk2()
-            elif vmtmp.vgname == 'cp':
-                vmtmp.vm_cp_disk1()
-                vmtmp.vm_resize_disk2()
-            elif vmtmp.vgname == 'vg':
-                vmtmp.vm_lvm_disk1()
-                vmtmp.vm_lvm_disk2()
-            '''
 #             vmtmp.vm_cp_disk1()
+            
             vmtmp.vm_resize_disk1()
             vmtmp.vm_resize_disk2()
             vmtmp.vm_xmlfile_create2()
@@ -206,6 +204,7 @@ def vm_ct():
                 vmtmp.vm_run()
                 vmtmp.vm_autostart()
             
+            
         j = j + 1
         
     
@@ -213,8 +212,6 @@ def vm_ct():
 if "__main__" == __name__:
     
     init_log()
-    getopts()  
-    checkinifile()   
-    readinifile()    
+    getopts()     
     vm_ct()
     colpt.ptgreen('Done')
