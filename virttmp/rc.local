@@ -10,4 +10,4 @@
 #
 # By default this script does nothing.
 
-/bin/bash /bin/setipbymac-ubuntu.sh H1_ubuntu14.04 192.168.122.1 0.0.0.0 0.0.0.0 52:54:00:C7:BF:31 10.0.20.30 255.255.255.0 52:54:00:33:14:73
+/bin/bash /bin/setipbymac-ubuntu.sh H1-ubuntu14.04 192.168.122.1 0.0.0.0 0.0.0.0 52:54:00:D3:CF:2E 10.0.20.30 255.255.255.0 52:54:00:DB:BC:05

@@ -26,20 +26,15 @@ from lib.code_assistance import init_log
 # from collections import Counter
 
 
-global vmarray, vminfo
 global vminicouter
 global vg
 global vmurl1,vmurl2,urlcount
-vmarray=range(255) #record valid vm info into array vmarray
-vminfo=range(255)  #record vm info
-vminicouter=0      #record vm num
 vg="vmVG"          #defaulf vg name
 vg="datavg"
 vmurl1 = 'http://10.10.26.90'
 # vmurl1="ftp://virtftp:1qa2ws3ed4rF@211.147.0.120:38602/"
 # vmurl2="ftp://virtftp:1qa2ws3ed4rF@116.211.20.200:38602/"
 urlcount=0
-
 
 logger = logging.getLogger("mylogger")
 
@@ -77,52 +72,12 @@ def getopts():
             sys.exit(11)
             assert False,"unhand option"
  
-# def checkinifile():
-#     """check config file exist!"""
-# #     global vmarray, vminfo
-# #     global vminicouter
-#     colpt.ptgreen_no_enter("check config file")
-#     if os.path.isfile("config/vm.csv"):
-#         colpt.ptgreen("..................config file exists ok!")
-#     else:
-#         colpt.ptred("config file not exists,please check!!!")
-#         sys.exit(1) 
-
-# def readinifile():
-#     """read config file and find valid value,assign value to vm array"""
-#     global vmarray, vminfo
-#     global vminicouter,vmurl1,vmurl2,urlcount
-#     f=open("config/vm.csv","r")
-#     i=0
-#     for line in f:
-#         logger.debug(str(line.strip()))
-#         line=line.strip()
-#         if (line.find("vm")==0):
-#             vmarray[i]=line
-#             i=i+1
-#             vminicouter=i
-#         
-#         if (line.find("url:")==0):
-#             temurl=line.split(":",1)
-#             if (urlcount==0):
-#                 vmurl1=temurl[1]
-#                 urlcount=1
-#             elif (urlcount==1):
-#                 vmurl2=temurl[1]
-#                 urlcount=2
-#             else:
-#                 print "url more count error!"
-#         
-#     f.close()
 
 def vm_ct():
     ''' 
         split vm info and assign to vm object
         and create vm inst
     '''
-    
-    global vmarray, vminfo
-    global vminicouter
     global vg
     j = 0
     
@@ -130,25 +85,22 @@ def vm_ct():
     logger.debug(config_dict)
     vminicouter =  len(config_dict)
     logger.debug('The number of vm is ' + str(vminicouter))
-    vminfo = range(vminicouter)
     
     print "vm config info is:"
     while j < vminicouter:
-        a = vmarray[j]
         
         colpt.ptred("vm " + str(j) + " info")
         colpt.ptyellow(str(config_dict['VM'+str(j+1)]))
         
         vmtmp=classvm.vm()
-#         ifvg = vminfo[0] 
         ifvg = config_dict['VM'+str(j+1)]['IMAGE_FORMAT']
         logger.debug(ifvg)
-        if(ifvg.find('Lvm')>0):
-            vmtmp.vgname = 'vg'
-        elif(ifvg.find('CpOnly')>0):
+        if(ifvg.find('lvm')>0):
+            vmtmp.vgname = 'lvm'
+        elif(ifvg.find('cponly')>0):
             vmtmp.vgname='none'
+        
             
-#         vmtmp.temp = vminfo[1]
         vmtmp.temp = config_dict['VM'+str(j+1)]['IMAGE_NAME']
         logger.debug(vmtmp.temp)
         
@@ -186,11 +138,14 @@ def vm_ct():
         else:
             vmtmp.vm_os_check()
 #             vmtmp.vm_cp_disk1()
+            if vmtmp.vgname == 'none':
+                vmtmp.vm_resize_disk1()
+                vmtmp.vm_resize_disk2()
+            elif vmtmp.vgname == 'lvm':
+                logger.debug('undefine')
+                exit()
             
-            vmtmp.vm_resize_disk1()
-            vmtmp.vm_resize_disk2()
             vmtmp.vm_xmlfile_create2()
-            
             vmtmp.vm_nicinfo_copy_in()
             
             if vmtmp.pwd == 'none':
