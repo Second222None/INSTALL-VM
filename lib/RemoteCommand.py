@@ -8,7 +8,7 @@ Created on Sep 26, 2017
 
 from subprocess import PIPE,Popen
 
-from lib.code_assistance import _log
+from code_assistance import _log
 import logging
 
 
@@ -61,6 +61,17 @@ class RemoteCommand(object):
                 _cmd = "sudo su -c \"" + cmdline + "\""
             else :    
                 _cmd = cmdline
+                _proc_h = Popen(_cmd, shell=True, stdout=PIPE, stderr=PIPE)
+                _result = _proc_h.communicate()
+#                 _proc_h.terminate() 
+                
+                if _proc_h.pid:
+                    _status = _proc_h.returncode
+                    _result_stdout = _result[0]
+                    _result_stderr = " "
+                
+#                 
+                
         else :
             if self.username :
                 _username = " -l " + self.username + ' '
@@ -94,10 +105,12 @@ class RemoteCommand(object):
             
             _proc_h = Popen(_cmd, shell=True, stdout=PIPE, stderr=PIPE)
         
+            
             if _proc_h.pid :
-                _status = 0
-                _result_stdout = " "
+                _status = _proc_h.returncode
+                _result_stdout = _proc_h.communicate()
                 _result_stderr = " "
+                
         
         return _status, _result_stdout, _result_stderr
         

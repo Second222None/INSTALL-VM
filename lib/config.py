@@ -11,15 +11,14 @@ def parse_config(config_file, *awk):
     
     _config_dict = {}
     _lines = []
-    path = re.compile(".*\/").search(os.path.realpath(__file__)).group(0) + "../"
     
-    
-   
-    _config_file = path + "config/" + config_file
-    if os.path.isfile(_config_file):
+#     path = re.compile(".*\/").search(os.path.realpath(__file__)).group(0) + "../"
+#     _config_file = path + "config/" + config_file
+
+    if os.path.isfile(config_file):
         logger.debug("Configuration file exist")
         
-        fh = open(_config_file, 'r')
+        fh = open(config_file, 'r')
         _config_lines = fh.read()
         fh.close()
         

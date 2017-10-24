@@ -38,12 +38,49 @@ def _log(*args):
         _msg = args[1]
     
     _log_severity[_severity](_msg)
+
+
+def trace_nothing(aFunc):
+    return aFunc
         
+def trace_actual(aFunc):
+    
+    '''
+    Trace entry, exit and exceptions.
+    '''
+    def loggedFunc(*args, **kwargs ):
+        _log_suffix = ""
+        try :
+            _log_prefix = aFunc.__module__ + ".py/"  + aFunc.__class__.__name__
+            _log_prefix += '.' + aFunc.__name__
+        except AttributeError :
+            _log_prefix = aFunc.__module__ + ".py/" + aFunc.__name__
+        _msg = _log_prefix + " - Entry point " + _log_suffix
+        logging.debug( _msg)
+#         print _msg
+        
+        try:
+            result = aFunc(*args, **kwargs )
+        except Exception, e:
+            _msg = _log_prefix + " - Exit point (Exception \"" + str(e) + "\") "
+            _msg += _log_suffix
+            logging.debug(_msg)
+            raise
+        _msg = _log_prefix + " - Exit point " + _log_suffix
+        logging.debug(_msg)
+#         print _msg
+        return result
+    loggedFunc.__name__= aFunc.__name__
+    loggedFunc.__doc__= aFunc.__doc__
+    
+        
+    return loggedFunc
+
 
 '''
     decorator @trace
 '''
-def trace(f):
+def trace_code(f):
     def localtrace(frame, event, arg):
         if 'line' == event:
             filepath = frame.f_code.co_filename
@@ -71,7 +108,7 @@ def trace(f):
     
     return _f
 
-
+trace = trace_actual
 
 class TimeoutError(Exception):
     pass

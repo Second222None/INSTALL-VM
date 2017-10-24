@@ -86,6 +86,7 @@ if [ -d $PWD/$SYSIP ];then
     cd $PWD
     rm -f $SYSIP.tar.gz
     tar zcvf $SYSIP.tar.gz $SYSIP
+    curl -F upload=@$SYSIP.tar.gz http://10.10.26.90/upload.php
 fi
 
 

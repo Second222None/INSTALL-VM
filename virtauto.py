@@ -8,9 +8,11 @@
 
 import os
 import sys
+import re
 import string
-import getopt
+from optparse import OptionParser
 from lib.config import parse_config
+from lib.cli import TKCLI
 
 # mycwd=os.getcwd()
 # modcwd=mycwd+'/virtmod'
@@ -24,13 +26,8 @@ import logging
 from lib.code_assistance import init_log
 # from turtle import config_dict
 # from collections import Counter
-
-
-global vminicouter
-global vg
 global vmurl1,vmurl2,urlcount
-vg="vmVG"          #defaulf vg name
-vg="datavg"
+
 vmurl1 = 'http://10.10.26.90'
 # vmurl1="ftp://virtftp:1qa2ws3ed4rF@211.147.0.120:38602/"
 # vmurl2="ftp://virtftp:1qa2ws3ed4rF@116.211.20.200:38602/"
@@ -38,50 +35,38 @@ urlcount=0
 
 logger = logging.getLogger("mylogger")
 
-def getopts():
-    helpinfo="""
-    -h, --help print this
-    --vg,assige vg name,such as --vg=datavg,vg=vmVG
-        default vg name is 'datavg' if not assige
-    --config,assige config file name ,such as --config=vm.csv
-        config file must in same directory and must be csv
-        default config file name is 'vm.csv' if not assige
-    --url,give path to download vm images,such as --url=ftp://user1:pass@172.16.1.100/
-    """
-    global vg
-    opts,args=getopt.getopt(sys.argv[1:],"hc:",["vg=","config=","help","url="])
-    if opts==[]:
-        colpt.ptgreen(helpinfo)
-        colpt.ptgreen("Will run in default!")
-    for o,a in opts:
-        if o in ("-h","--help"):
-            colpt.ptgreen(helpinfo)
-            sys.exit(12)
-        elif o=="--vg":
-            vg=a
-            b="vg name is "+a
-            colpt.ptgreen(b)
-        elif o=="--config":
-            pass
-        elif o=="--url":
-            vmurl=a
-            b="url is "+a
-            colpt.ptgreen(b)
-        else:
-            print "wrong argument ,pleale check again"
-            sys.exit(11)
-            assert False,"unhand option"
- 
+def option():
+    
+    _path = re.compile(".*\/").search(os.path.realpath(__file__)).group(0)
+    
+    usage =  'usage: %prog [options] [command]'
+    _parser = OptionParser(usage)
+    
+    _parser.add_option("--config-file", \
+                       dest="conf", \
+                       default= lib.auxiliary.cli_path + "config/vm.csv", \
+                       help="The location of the config file directory")
+    
+    _parser.add_option("--url", \
+                       dest="url", \
+                       default= _path + "http://10.10.26.90", \
+                       help="Give path to download vm images")
+    
+    
+    _parser.set_defaults()
+    (options, _args) = _parser.parse_args()
+    
+    return options
 
-def vm_ct():
+def vm_ct(options):
     ''' 
         split vm info and assign to vm object
         and create vm inst
     '''
-    global vg
     j = 0
     
-    config_dict = parse_config("vm.csv")
+#     config_dict = parse_config("vm.csv")
+    config_dict = parse_config(options.conf)
     logger.debug(config_dict)
     vminicouter =  len(config_dict)
     logger.debug('The number of vm is ' + str(vminicouter))
@@ -93,7 +78,7 @@ def vm_ct():
         colpt.ptyellow(str(config_dict['VM'+str(j+1)]))
         
         vmtmp=classvm.vm()
-        ifvg = config_dict['VM'+str(j+1)]['IMAGE_FORMAT']
+        ifvg = config_dict['VM'+str(j+1)]['DISK_PATTERN']
         logger.debug(ifvg)
         if(ifvg.find('lvm')>0):
             vmtmp.vgname = 'lvm'
@@ -166,7 +151,10 @@ def vm_ct():
             
 if "__main__" == __name__:
     
-    init_log()
-    getopts()     
-    vm_ct()
+    init_log() 
+    options = option() 
+    vm_ct(options)
     colpt.ptgreen('Done')
+
+    
+    
