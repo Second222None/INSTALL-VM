@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+'''
+Created on Otc 24, 2017
+
+@author: weisong
+'''
+
 import re
 import os
 from cmd import Cmd
@@ -15,8 +21,7 @@ class TKCLI(Cmd):
         self.prompt = '(WEISONG)'
         Cmd.emptyline = self.emptyline()
         self.operation = RemoteCommand()
-        
-        
+      
     @trace   
     def do_test(self, arg):
         '''
@@ -57,6 +62,25 @@ class TKCLI(Cmd):
         _status, _msg, _result_stderr = self.operation.run_os_command(parameters)
         
         print(_msg)
+    
+    
+    def setup_default_options(self) :
+        '''
+        Do command line parsing
+        '''
+
+        _path = re.compile(".*\/").search(os.path.realpath(__file__)).group(0)
+            
+        usage = '''usage: %prog [options] [command]
+        '''
+        self.parser = OptionParser(usage)
+        
+        self.parser.add_option("--oldconfig", dest = "oldconfig", action = "store_true", \
+                      default = False, \
+                        help = "Use the deprecated configuration format.")
+    
+        self.parser.set_defaults()
+        (self.options, self.args) = self.parser.parse_args()
         
         
 if '__main__' == __name__:

@@ -63,15 +63,10 @@ class RemoteCommand(object):
                 _cmd = cmdline
                 _proc_h = Popen(_cmd, shell=True, stdout=PIPE, stderr=PIPE)
                 _result = _proc_h.communicate()
-#                 _proc_h.terminate() 
-                
                 if _proc_h.pid:
                     _status = _proc_h.returncode
                     _result_stdout = _result[0]
-                    _result_stderr = " "
-                
-#                 
-                
+                    _result_stderr = " "      
         else :
             if self.username :
                 _username = " -l " + self.username + ' '

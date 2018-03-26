@@ -109,6 +109,9 @@ class vm():
         if (self.vgname=="none"):
             self.vda="/datapool/"+self.name+".vda"
             self.vdb="/datapool/"+self.name+".vdb"
+            ######################################
+            self.vdc="/datapool/"+self.name+".vdc"
+            self.vdd="/datapool/"+self.name+".vdd"
         elif (self.vgname=="cp"):
             self.vda="/datapool/"+self.name+".vda"
             self.vdb="/datapool/"+self.name+".vdb"
@@ -201,25 +204,16 @@ class vm():
         os.system(vm_disk1_resize)
         
     def vm_resize_disk2(self):
-        mycwd=os.getcwd()
-        w2k3vdbvirtpath=mycwd+"/virtvdb/win2k3.vdb"
-        w2k3vdbdatapath="/datapool/win2k3.vdb"
-        copyw2k3vdb="\cp -f "+w2k3vdbvirtpath+" /datapool/"
-        w2k8vdbvirtpath=mycwd+"/virtvdb/win2k8.vdb"
-        w2k8vdbdatapath=mycwd+"/datapool/win2k8.vdb"
-        copyw2k8vdb="\cp -f "+w2k8vdbvirtpath+" /datapool/"
-        if os.path.isfile(w2k3vdbdatapath):
-            pass
-        else:
-            os.popen(copyw2k3vdb)
-        if os.path.isfile(w2k8vdbdatapath):
-            pass
-        else:
-            os.popen(copyw2k8vdb)
         checkos=self.os
         vmdisk2="qemu-img create  -f qcow2 "+self.vdb+" "+self.disk2_size
-        #vm_disk1_resize="virt-resize --expand /dev/vda1 "+size+" "+self.disk1_size
+        ################################################################
+        vmdisk3="qemu-img create  -f qcow2 "+self.vdc+" 20G"
+        vmdisk4="qemu-img create  -f qcow2 "+self.vdd+" 20G"
+       
         os.popen(vmdisk2)
+        os.popen(vmdisk3)
+        os.popen(vmdisk4)
+        
         if (checkos=="2003"):
             vm_disk2_resize="virt-resize --expand /dev/vda1 /datapool/win2k3.vdb "+self.vdb
         elif (checkos=="2008"):
@@ -509,6 +503,10 @@ class vm():
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
                 " --disk path="+self.vdb+\
                 ",bus=virtio,cache=writethrough,format=qcow2,io=native"+\
+                " --disk path="+self.vdc+\
+                ",bus=virtio,cache=writeback,format=qcow2,io=native"+\
+                " --disk path="+self.vdd+\
+                ",bus=virtio,cache=none,format=qcow2,io=native"+\
                 " --network bridge="+self.out_bridge+",model="+self.out_type+",mac="+self.out_mac+" --network network="+self.in_bridge+\
                 ",model="+self.in_type+",mac="+self.in_mac+" --vnc --vncport="+self.vnc_port+" --vnclisten=0.0.0.0"+" --import --hvm --virt-type kvm  "+\
                 " --print-xml>"+vmfile

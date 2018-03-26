@@ -28,7 +28,7 @@ from lib.code_assistance import init_log
 # from collections import Counter
 global vmurl1,vmurl2,urlcount
 
-vmurl1 = 'http://10.10.26.90'
+vmurl1 = 'http://10.10.26.90/'
 # vmurl1="ftp://virtftp:1qa2ws3ed4rF@211.147.0.120:38602/"
 # vmurl2="ftp://virtftp:1qa2ws3ed4rF@116.211.20.200:38602/"
 urlcount=0
@@ -44,7 +44,7 @@ def option():
     
     _parser.add_option("--config-file", \
                        dest="conf", \
-                       default= lib.auxiliary.cli_path + "config/vm.csv", \
+                       default= _path + "config/vm.csv", \
                        help="The location of the config file directory")
     
     _parser.add_option("--url", \
@@ -123,6 +123,7 @@ def vm_ct(options):
         else:
             vmtmp.vm_os_check()
 #             vmtmp.vm_cp_disk1()
+            
             if vmtmp.vgname == 'none':
                 vmtmp.vm_resize_disk1()
                 vmtmp.vm_resize_disk2()
